@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kuis IPAS Kelas 6 - Bab 3: Jejak Sang Pahlawan</title>
+<style>
+*{box-sizing:border-box} body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#eef6ff,#f8fbff);color:#17324d}
+.container{max-width:850px;margin:30px auto;padding:18px}.card{background:white;border-radius:20px;padding:28px;box-shadow:0 8px 28px rgba(0,0,0,.10)}
+h1{text-align:center;margin:0 0 8px;color:#175ea8;font-size:28px}.subtitle{text-align:center;color:#60758a;margin-bottom:25px}
+.name{display:flex;gap:10px;margin-bottom:22px}.name input{flex:1;padding:13px;border:1px solid #ccd8e3;border-radius:10px;font-size:16px}
+.progress{height:10px;background:#e6edf4;border-radius:20px;overflow:hidden;margin-bottom:25px}.bar{height:100%;width:0;background:#2878c8;transition:.3s}
+.q{border:1px solid #e0e8ef;border-radius:15px;padding:18px;margin:16px 0}.q h3{font-size:17px;margin:0 0 14px;line-height:1.5}
+label{display:block;padding:12px;margin:8px 0;border:1px solid #d9e2ea;border-radius:10px;cursor:pointer;transition:.2s}
+label:hover{background:#f1f7fc;border-color:#2878c8} input[type=radio],input[type=checkbox]{margin-right:9px}
+button{width:100%;padding:15px;border:0;border-radius:12px;background:#175ea8;color:white;font-size:17px;font-weight:bold;cursor:pointer;margin-top:20px}
+button:hover{background:#0f4d8c}.result{display:none;text-align:center;padding:25px;background:#eef7ff;border-radius:15px;margin-top:22px}.score{font-size:42px;font-weight:bold;color:#175ea8}.small{color:#60758a}
+</style>
+</head>
+<body>
+<div class="container"><div class="card">
+<h1>🇮🇩 Kuis IPAS Kelas 6</h1>
+<div class="subtitle">Bab 3 — Jejak Sang Pahlawan</div>
+<div class="name"><input id="studentName" placeholder="Nama siswa"></div>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<form id="quiz"></form>
+<button type="button" onclick="submitQuiz()">KIRIM JAWABAN & LIHAT NILAI</button>
+<div class="result" id="result"></div>
+</div></div>
+
+<script>
+const questions=[
+["Apa tujuan utama para pahlawan Indonesia melakukan perjuangan melawan penjajahan?",["Mendapatkan kekuasaan pribadi","Mempertahankan dan memperoleh kemerdekaan","Memperluas wilayah kerajaan","Mencari keuntungan perdagangan"],1,"single"],
+["Salah satu alasan perjuangan bangsa Indonesia pada awalnya sering mengalami kegagalan adalah ...",["Perjuangan masih bersifat kedaerahan","Rakyat tidak memiliki keberanian","Semua daerah sudah merdeka","Penjajah tidak memiliki kekuatan"],0,"single"],
+["Tokoh yang dikenal memimpin Perang Diponegoro pada tahun 1825–1830 adalah ...",["Pangeran Diponegoro","Ki Hajar Dewantara","Mohammad Hatta","Sultan Hasanuddin"],0,"single"],
+["Sultan Hasanuddin merupakan salah satu tokoh yang melawan VOC di wilayah Sulawesi Selatan.",["Benar","Salah"],0,"single"],
+["Mengapa persatuan menjadi penting dalam perjuangan bangsa Indonesia?",["Agar perjuangan dilakukan sendiri-sendiri","Agar kekuatan bangsa menjadi lebih besar","Agar setiap daerah memiliki musuh sendiri","Agar penjajah mudah menguasai wilayah"],1,"single"],
+["Sikap yang dapat diteladani dari para pahlawan adalah ...",["Berani membela kebenaran","Rela berkorban","Mengutamakan kepentingan bangsa","Mementingkan diri sendiri"],[0,1,2],"multi"],
+["Sumpah Pemuda pada 28 Oktober 1928 penting karena ...",["Menegaskan persatuan pemuda Indonesia","Mengakhiri seluruh penjajahan","Menandai dimulainya Perang Diponegoro","Menjadikan Indonesia negara merdeka"],0,"single"],
+["Proklamasi Kemerdekaan Indonesia dibacakan pada 17 Agustus 1945.",["Benar","Salah"],0,"single"],
+["Tokoh yang membacakan Proklamasi Kemerdekaan Indonesia adalah ...",["Soekarno","Ki Hajar Dewantara","Pangeran Diponegoro","Sultan Hasanuddin"],0,"single"],
+["Perjuangan Ki Hajar Dewantara dalam bidang pendidikan menunjukkan bahwa ...",["Pendidikan dapat membangun kesadaran kebangsaan","Pendidikan hanya penting bagi penjajah","Perjuangan harus selalu menggunakan senjata","Sekolah tidak berhubungan dengan kemerdekaan"],0,"single"],
+["Jika para pejuang dari berbagai daerah bersatu sejak awal, kemungkinan yang terjadi adalah ...",["Perjuangan menjadi lebih terkoordinasi","Perjuangan semakin terpecah","Perjuangan tidak memiliki tujuan","Penjajah semakin mudah memecah belah"],0,"single"],
+["Strategi penjajah untuk memecah persatuan bangsa dikenal dengan istilah ...",["Devide et impera","Edukasi nasional","Gotong royong","Musyawarah mufakat"],0,"single"],
+["Hubungan perjuangan para pahlawan dengan kehidupan siswa saat ini adalah ...",["Melanjutkan semangat perjuangan melalui belajar","Harus ikut berperang","Tidak perlu mempelajari sejarah","Cukup menghafal nama pahlawan"],0,"single"],
+["Contoh menghargai jasa pahlawan di sekolah adalah ...",["Belajar dengan tekun dan menjaga persatuan","Merusak fasilitas sekolah","Mengejek teman dari daerah lain","Menghindari kerja sama"],0,"single"],
+["Contoh perjuangan tanpa menggunakan senjata adalah ...",["Mengembangkan pendidikan","Membangun kesadaran persatuan","Mengembangkan organisasi pergerakan","Merusak fasilitas umum"],[0,1,2],"multi"],
+["Mengapa kita perlu mempelajari sejarah perjuangan pahlawan?",["Mengambil nilai dan pelajaran dari masa lalu","Mengulang peperangan","Hanya mengetahui tanggal","Membandingkan daerah yang paling kuat"],0,"single"],
+["Seorang siswa bekerja sama dengan teman yang berbeda suku. Sikap tersebut menunjukkan nilai ...",["Persatuan","Perpecahan","Egoisme","Diskriminasi"],0,"single"],
+["Kelas memiliki siswa dari berbagai daerah, tetapi mereka bekerja sama menyelesaikan tugas. Hal ini menunjukkan bahwa ...",["Perbedaan dapat disatukan untuk mencapai tujuan bersama","Semua siswa harus memiliki budaya yang sama","Perbedaan harus dihilangkan","Kerja kelompok hanya boleh dengan teman sedaerah"],0,"single"],
+["Makna semboyan Bhinneka Tunggal Ika adalah ...",["Berbeda-beda tetapi tetap satu","Semua daerah memiliki budaya yang sama","Perbedaan menyebabkan perpecahan","Setiap kelompok hanya mementingkan daerahnya"],0,"single"],
+["'Meneladani pahlawan masa kini hanya dapat dilakukan dengan ikut berperang.' Pernyataan tersebut ...",["Benar","Salah"],1,"single"]
+];
+
+const form=document.getElementById("quiz");
+questions.forEach((q,i)=>{
+ let div=document.createElement("div"); div.className="q";
+ let h=document.createElement("h3"); h.textContent=(i+1)+". "+q[0]; div.appendChild(h);
+ q[1].forEach((a,j)=>{
+   let l=document.createElement("label");
+   let inp=document.createElement("input");
+   inp.type=q[3]==="multi"?"checkbox":"radio"; inp.name="q"+i; inp.value=j;
+   inp.onchange=updateProgress;
+   l.appendChild(inp); l.appendChild(document.createTextNode(a)); div.appendChild(l);
+ });
+ form.appendChild(div);
+});
+function updateProgress(){
+ let answered=0;
+ questions.forEach((q,i)=>{if(document.querySelectorAll('input[name="q'+i+'"]:checked').length)answered++});
+ document.getElementById("bar").style.width=(answered/questions.length*100)+"%";
+}
+function submitQuiz(){
+ let name=document.getElementById("studentName").value.trim()||"Siswa";
+ let score=0, unanswered=0;
+ questions.forEach((q,i)=>{
+   let checked=[...document.querySelectorAll('input[name="q'+i+'"]:checked')].map(x=>+x.value);
+   if(!checked.length){unanswered++;return}
+   let correct=Array.isArray(q[2])?q[2]:[q[2]];
+   if(checked.length===correct.length && checked.every(v=>correct.includes(v)) && correct.every(v=>checked.includes(v))) score++;
+ });
+ let nilai=Math.round(score/questions.length*100);
+ let result=document.getElementById("result");
+ result.style.display="block";
+ result.innerHTML=`<div>Hasil Kuis</div><h2>${name}</h2><div class="score">${nilai}</div><p><b>${score} / ${questions.length}</b> jawaban benar</p><p class="small">${unanswered?unanswered+" soal belum dijawab.": "Semua soal telah dijawab."}</p>`;
+ result.scrollIntoView({behavior:"smooth"});
+}
+</script>
+</body>
+</html>
